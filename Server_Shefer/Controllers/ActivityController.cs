@@ -13,28 +13,21 @@ namespace Server_Shefer.Controllers
     public class ActivityController : ApiController
     {
 
-        private ActivitiesRepository _activityRepository;
+        private ActivitiesDataRepository _activityDataRepository;
 
         public ActivityController()
         {
-            _activityRepository = new ActivitiesRepository();
+            _activityDataRepository = new ActivitiesDataRepository();
         }
 
         // GET: api/Activity
 
         public IEnumerable<ActivityClass> Get()
         {
-            return _activityRepository.GetActivities();
+            return _activityDataRepository.GetActivities();
         }
 
-        [Route("Activity/{prog}")]
-        [HttpGet]
-        // GET: api/Activity/5
-        public List<ActivityClass> Get(string prog)
-        {
-            return _activityRepository.GetActivitiesByProgram(prog);
-        }
-
+       
         // POST: api/Activity
         public void Post([FromBody]string value)
         {

@@ -15,8 +15,7 @@ namespace Server_Shefer.DataLayer
     public class DoctorsRepository : DoctorClass
     {
         private IDbConnection db = new OleDbConnection("Provider = Microsoft.ACE.OLEDB.12.0; " +
-                                                        "Data Source = C:\\Final Project\\ServerSide\\Server_Shefer\\App_Data\\Shefer_Data.accdb");
-
+                                                        "Data Source = d:\\FinalProject\\shefer-server\\Server_Shefer\\App_Data\\Shefer_Data.accdb");
         //get all doctors from database
         public List<DoctorClass> GetAllDoctors()
         {
@@ -34,12 +33,37 @@ namespace Server_Shefer.DataLayer
        
         // get doctor by Email
         public DoctorClass FindByEmail(string Email, string Password)
-        //public string FindByEmail(string Email)
         {
-            //return Email;
-
+            //Find Doctor by Email
             var sql = "SELECT * From Doctors WHERE Email = @Email AND Password = @Password";
+            //Find all patient from doctor
+            var sqlPatient = "SELECT * From Patients WHERE DoctorId = @DoctorId";
+            // Find patients contacts
+            var sqlContact = "SELECT * From Contacts WHERE PatientId = @PatientId";
+            //Find patient program
+            var sqlProgram = "SELECT * From Programs WHERE PatientId = @PatientId";
+            //Find all activities in patients programs
+            var sqlActivities =
+                "SELECT * From PatientActivities WHERE ProgramId = @ProgramId AND PatientId = @PatientId";
+            //return doctor object
             var doctor = this.db.Query<DoctorClass>(sql, new { Email = Email, Password = Password}).SingleOrDefault();
+            var doctorId = doctor.DoctorId;
+            //find patient data object
+            var patientData = this.db.Query<PatientClass>(sqlPatient, new {DoctorId = doctorId}).ToList();
+            // add contacts and program to patient object 
+            foreach (var patient in patientData)
+            {
+                patient.Contact =
+                    this.db.Query<PatientContact>(sqlContact, new {PatientId = patient.PatientID}).SingleOrDefault();
+                patient.Program = this.db.Query<ProgramClass>(sqlProgram, new { PatientId = patient.PatientID }).ToList();
+                foreach (var program in patient.Program)
+                {
+                    program.PatientActivityList =
+                        this.db.Query<PatientActivityClass>(sqlActivities, new {ProgramId = program.ProgramID ,PatientId = patient.PatientID}).ToList();
+                }
+            }
+            //add patient object to doctor object
+            doctor.Patients = patientData;
             return doctor;
         }
 

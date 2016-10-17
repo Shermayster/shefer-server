@@ -9,21 +9,15 @@ using Server_Shefer.Models;
 
 namespace Server_Shefer.DataLayer
 {
-    public class ActivitiesRepository:ActivityClass
+    public class ActivitiesDataRepository
     {
         private IDbConnection db = new OleDbConnection("Provider = Microsoft.ACE.OLEDB.12.0; " +
                                                         "Data Source = d:\\FinalProject\\shefer-server\\Server_Shefer\\App_Data\\Shefer_Data.accdb");
 
-        public List<PatientActivityClass> GetActivities()
+        public List<ActivityClass> GetActivities()
         {
-           return this.db.Query<PatientActivityClass>("SELECT * FROM PatientActivities").ToList();
+            return this.db.Query<ActivityClass>("SELECT * FROM ActivitiesData").ToList();
 
         }
-
-        public List<PatientActivityClass> GetActivitiesByProgram(string program)
-        {
-            return this.db.Query<PatientActivityClass>("SELECT * FROM Activities WHERE ProgramName = '" + program + "'").ToList();
-        }
-
     }
 }

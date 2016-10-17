@@ -11,6 +11,7 @@ namespace Server_Shefer.Models
         public string ActivityName { get; set; }
         public string Description { get; set; }
         public string ProgramName { get; set; }
-
+        public string ActivityType { get; set; }
+        public string ProgramId { get; set; }
     }
 }

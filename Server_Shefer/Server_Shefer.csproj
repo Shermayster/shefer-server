@@ -201,10 +201,15 @@
     <Compile Include="Controllers\ActivityController.cs" />
     <Compile Include="Controllers\DoctorController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\PatientController.cs" />
     <Compile Include="Controllers\TestController.cs" />
     <Compile Include="Controllers\ValuesController.cs" />
+    <Compile Include="DataLayer\ActivitiesDataRepository.cs" />
     <Compile Include="DataLayer\ActivitiesRepository.cs" />
     <Compile Include="DataLayer\DoctorsRepository.cs" />
+    <Compile Include="DataLayer\PatientContactRepository.cs" />
+    <Compile Include="DataLayer\PatientRepository.cs" />
+    <Compile Include="DataLayer\ProgramRepository.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -212,6 +217,9 @@
     <Compile Include="Models\ActivityInterface.cs" />
     <Compile Include="Models\DoctorClass.cs" />
     <Compile Include="Models\DoctorInterface.cs" />
+    <Compile Include="Models\PatientActivityClass.cs" />
+    <Compile Include="Models\PatientClass.cs" />
+    <Compile Include="Models\PatientContact.cs" />
     <Compile Include="Models\ProgramClass.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
