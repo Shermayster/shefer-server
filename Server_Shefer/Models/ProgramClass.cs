@@ -9,7 +9,7 @@ namespace Server_Shefer.Models
     {
         public int ProgramID { get; set; }
         public int PatientId { get; set; }
-        public string Status { get; set; }
+        public bool Status { get; set; }
         public DateTime StartDay { get; set; }
         public int Duration { get; set; }
         public int CurrentWeek { get; set; }

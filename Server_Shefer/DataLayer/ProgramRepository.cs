@@ -27,7 +27,7 @@ namespace Server_Shefer.DataLayer
         //create program
         public void CreateProgram(ProgramClass program)
         {
-            var sql =
+            var sql = 
                 "INSERT INTO Programs ([PatientId], [Status], [StartDay], [Duration], [CurrentWeek]) VALUES (@PatientId, @Status, @StartDay, @Duration, @CurrentWeek)";
             this.db.Query<string>(sql, new
             {
