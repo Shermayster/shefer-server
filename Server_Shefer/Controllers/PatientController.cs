@@ -46,9 +46,9 @@ namespace Server_Shefer.Controllers
         }
 
         // POST: api/Patient
-        public void Post([FromBody]PatientClass patient)
+        public PatientClass Post([FromBody]PatientClass patient)
         {
-             _patientRepository.AddPatient(patient);
+            return _patientRepository.AddPatient(patient);
         }
 
         // PUT: api/Patient/5

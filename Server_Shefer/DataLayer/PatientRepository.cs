@@ -21,10 +21,15 @@ namespace Server_Shefer.DataLayer
             return patient;
         }
         //add patient
-        public void AddPatient(PatientClass patient)
+        public PatientClass AddPatient(PatientClass patient)
         {
-            var sql = "INSERT INTO Patients([DoctorId], [Password]) VALUES(@DoctorId, @Password)";
-            this.db.Query<string>(sql, patient);
+            var sql = "INSERT INTO Patients([DoctorId], [Password]) VALUES(@DoctorId, @Password); ";
+            var sqlIdent =
+                "SELECT * From Patients WHERE Password = @Password";
+            this.db.Execute(sql, patient);
+            var newPatientID = db.Query<PatientClass>(sqlIdent, patient).FirstOrDefault();
+            return newPatientID;
+           
         }
 
         //update patient data

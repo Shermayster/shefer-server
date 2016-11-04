@@ -47,24 +47,35 @@ namespace Server_Shefer.DataLayer
                 "SELECT * From PatientActivities WHERE ProgramId = @ProgramId AND PatientId = @PatientId";
             //return doctor object
             var doctor = this.db.Query<DoctorClass>(sql, new { Email = Email, Password = Password}).SingleOrDefault();
-            var doctorId = doctor.DoctorId;
-            //find patient data object
-            var patientData = this.db.Query<PatientClass>(sqlPatient, new {DoctorId = doctorId}).ToList();
-            // add contacts and program to patient object 
-            foreach (var patient in patientData)
+            if (doctor != null)
             {
-                patient.Contact =
-                    this.db.Query<PatientContact>(sqlContact, new {PatientId = patient.PatientID}).SingleOrDefault();
-                patient.Program = this.db.Query<ProgramClass>(sqlProgram, new { PatientId = patient.PatientID }).ToList();
-                foreach (var program in patient.Program)
+                var doctorId = doctor.DoctorId;
+
+
+                //find patient data object
+                var patientData = this.db.Query<PatientClass>(sqlPatient, new {DoctorId = doctorId}).ToList();
+                // add contacts and program to patient object 
+                foreach (var patient in patientData)
                 {
-                    program.PatientActivityList =
-                        this.db.Query<PatientActivityClass>(sqlActivities, new {ProgramId = program.ProgramID ,PatientId = patient.PatientID}).ToList();
+                    patient.Contact =
+                        this.db.Query<PatientContact>(sqlContact, new {PatientId = patient.PatientID}).SingleOrDefault();
+                    patient.Program =
+                        this.db.Query<ProgramClass>(sqlProgram, new {PatientId = patient.PatientID}).ToList();
+                    foreach (var program in patient.Program)
+                    {
+                        program.PatientActivityList =
+                            this.db.Query<PatientActivityClass>(sqlActivities,
+                                new {ProgramId = program.ProgramID, PatientId = patient.PatientID}).ToList();
+                    }
                 }
+                //add patient object to doctor object
+                doctor.Patients = patientData;
+                return doctor;
             }
-            //add patient object to doctor object
-            doctor.Patients = patientData;
-            return doctor;
+            else
+            {
+                return null;
+            }
         }
 
 
