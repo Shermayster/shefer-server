@@ -13,6 +13,9 @@ namespace Server_Shefer.DataLayer
     {
         private IDbConnection db = new OleDbConnection("Provider = Microsoft.ACE.OLEDB.12.0; " +
                                                         "Data Source = d:\\FinalProject\\shefer-server\\Server_Shefer\\App_Data\\Shefer_Data.accdb");
+        private ProgramRepository _programRepository = new ProgramRepository();
+        private PatientContactRepository _patientContactRepository = new PatientContactRepository();
+
         //get patient
         public PatientClass FindPatien(int id)
         {
@@ -23,11 +26,15 @@ namespace Server_Shefer.DataLayer
         //add patient
         public PatientClass AddPatient(PatientClass patient)
         {
-            var sql = "INSERT INTO Patients([DoctorId], [Password]) VALUES(@DoctorId, @Password); ";
+            var sql = "INSERT INTO Patients([DoctorId], [Password]) VALUES(@DoctorId, @Password);";
             var sqlIdent =
                 "SELECT * From Patients WHERE Password = @Password";
             this.db.Execute(sql, patient);
             var newPatientID = db.Query<PatientClass>(sqlIdent, patient).FirstOrDefault();
+            patient.Contact.PatientId = newPatientID.PatientID;
+            patient.Program[0].PatientId = newPatientID.PatientID;
+            _patientContactRepository.AddContact(patient.Contact);
+            _programRepository.CreateProgram(patient.Program[0]);
             return newPatientID;
            
         }
