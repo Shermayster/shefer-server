@@ -15,7 +15,8 @@ namespace Server_Shefer.Controllers
     public class DoctorController : ApiController
     {
         //private IDbConnection db =  new OleDbConnection("Provider = Microsoft.ACE.OLEDB.12.0; " +
-                                                        //"Data Source = C:\\Final Project\\ServerSide\\Server_Shefer\\App_Data\\Shefer_Data.accdb");
+        //"Data Source = C:\\Final Project\\ServerSide\\Server_Shefer\\App_Data\\Shefer_Data.accdb");
+        
 
         private DoctorsRepository _doctorsRepository;
         public DoctorController()
@@ -31,7 +32,7 @@ namespace Server_Shefer.Controllers
 
         // GET: api/Doctor/5
         public DoctorClass Get(int id)
-        {
+        {   
           
            return _doctorsRepository.Find(id);
             
@@ -39,11 +40,23 @@ namespace Server_Shefer.Controllers
 
         [Route("api/Email")]
         //Get by Email
-        public DoctorClass GetByEmail(string Email, string Password)
+        public HttpResponseMessage GetByEmail(string Email, string Password)
         {
-           return _doctorsRepository.FindByEmail(Email, Password);
+            HttpResponseMessage response = null;
+            var doctor = _doctorsRepository.FindByEmail(Email, Password);
+            if (doctor == null)
+            {
+                response = new HttpResponseMessage(HttpStatusCode.NotFound);
+            }
+            else
+            {
+                response = Request.CreateResponse(HttpStatusCode.OK, doctor);
+
+            }
+            return response;
+
             //var email = Email;   
-           // return "hello";
+            // return "hello";
 
         }
 
