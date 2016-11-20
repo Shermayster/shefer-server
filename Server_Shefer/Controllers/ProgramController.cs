@@ -33,11 +33,13 @@ namespace Server_Shefer.Controllers
         public void Post([FromBody]ProgramClass program)
         {
             _programRepository.CreateProgram(program);
+           
         }
 
         // PUT: api/Program/5
-        public void Put(int id, [FromBody]string value)
+        public void Put(int id, [FromBody]ProgramClass program)
         {
+            _programRepository.UpdateProgram(program);
         }
 
         // DELETE: api/Program/5

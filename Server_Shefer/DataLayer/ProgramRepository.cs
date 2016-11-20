@@ -28,16 +28,38 @@ namespace Server_Shefer.DataLayer
         public void CreateProgram(ProgramClass program)
         {
             var sql = 
-                "INSERT INTO Programs ([PatientId], [Status], [StartDay], [Duration], [CurrentWeek]) VALUES (@PatientId, @Status, @StartDay, @Duration, @CurrentWeek)";
-            this.db.Query<string>(sql, new
+                "INSERT INTO Programs ([PatientId], [Status], [StartDay], [Duration], [CurrentWeek]) " +
+                "VALUES (@PatientId, @Status, @StartDay, @Duration, @CurrentWeek)";
+            var  newProgram = this.db.Query<ProgramClass>(sql, new
             {
                 PatientId = program.PatientId,
                 Status = program.Status,
                 StartDay = program.StartDay,
                 Duration = program.Duration,
                 CurrentWeek = program.CurrentWeek
+            }).SingleOrDefault();
+            program.ProgramID = newProgram.ProgramID;
+            // add new activities to the program
+            var insertActivities = "INSERT INTO PatientActivities ([ProgramID], [ActivityId], [ActivityRestponce]," +
+                               "[ActivityFeedback], [ActivityStatus],[ActivityName]," +
+                               "[ActivityType], [ActivityGroup]) VALUES " +
+                               " (@ProgramId, @ActivityId, @ActivityRestponce, @ActivityFeedback," +
+                               "@ActivityStatus, @ActivityName, @ActivityType, @ActivityGroup)";
+            foreach (var activity in program.PatientActivityList)
+            {
+                this.db.Query<string>(insertActivities, new
+                {
+                    ProgramID = activity.ProgramId,
+                    ActivityId = activity.ActivityId,
+                    ActivityRestponce = activity.ActivityResponce,
+                    ActivityFeedback = activity.ActivityFeedback,
+                    ActivityStatus = activity.ActivityStatus,
+                    ActivityName = activity.ActivityName,
+                    ActivityType = activity.ActivityType,
+                    ActivityGroup = activity.ActivityGroup
+                });
+            }
 
-            });
         }
         //update program
         public void UpdateProgram(ProgramClass program)
@@ -52,12 +74,36 @@ namespace Server_Shefer.DataLayer
                 CurrentWeek = program.CurrentWeek,
                 ProgramID = program.ProgramID
             });
+
+            //delet all activities in the program
+            var deleteActivities = "DELETE * FROM PatientActivities WHERE ProgramID = @ProgramID";
+            this.db.Query<string>(deleteActivities, new {ProgramID = program.ProgramID});
+            // add new activities to the program
+            var insertActivities = "INSERT INTO PatientActivities ([ProgramID], [ActivityId], [ActivityRestponce]," +
+                               "[ActivityFeedback], [ActivityStatus],[ActivityName]," +
+                               "[ActivityType], [ActivityGroup]) VALUES " +
+                               " (@ProgramId, @ActivityId, @ActivityRestponce, @ActivityFeedback," +
+                               "@ActivityStatus, @ActivityName, @ActivityType, @ActivityGroup)";
+            foreach (var activity in program.PatientActivityList)
+            {
+                this.db.Query<string>(insertActivities, new
+                {
+                    ProgramID = activity.ProgramId,
+                    ActivityId = activity.ActivityId, 
+                    ActivityRestponce = activity.ActivityResponce,
+                    ActivityFeedback = activity.ActivityFeedback,
+                    ActivityStatus = activity.ActivityStatus,        
+                    ActivityName = activity.ActivityName,
+                    ActivityType = activity.ActivityType,
+                    ActivityGroup = activity.ActivityGroup
+                });
+            }
         }
 
         //delete program
         public void DeleteProgram(int programId)
         {
-            var sql = "DELETE FROM Programs  WHERE ProgramID = @ProgramID";
+            var sql = "DELETE * FROM Programs  WHERE ProgramID = @ProgramID";
             this.db.Query<string>(sql, new {ProgramID = programId});
         }
     }
