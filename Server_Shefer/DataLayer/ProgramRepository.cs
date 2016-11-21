@@ -42,9 +42,11 @@ namespace Server_Shefer.DataLayer
             // add new activities to the program
             var insertActivities = "INSERT INTO PatientActivities ([ProgramID], [ActivityId], [ActivityRestponce]," +
                                "[ActivityFeedback], [ActivityStatus],[ActivityName]," +
-                               "[ActivityType], [ActivityGroup]) VALUES " +
+                               "[ActivityType], [ActivityGroup], [RationaleCategory], [Description]," +
+                                   "[ActivityNameParent]) VALUES " +
                                " (@ProgramId, @ActivityId, @ActivityRestponce, @ActivityFeedback," +
-                               "@ActivityStatus, @ActivityName, @ActivityType, @ActivityGroup)";
+                               "@ActivityStatus, @ActivityName, @ActivityType, @ActivityGroup" +
+                                   "@ActivityGroup, @RationaleCategory, @Description, @ActivityNameParent)";
             foreach (var activity in program.PatientActivityList)
             {
                 this.db.Query<string>(insertActivities, new
@@ -56,7 +58,10 @@ namespace Server_Shefer.DataLayer
                     ActivityStatus = activity.ActivityStatus,
                     ActivityName = activity.ActivityName,
                     ActivityType = activity.ActivityType,
-                    ActivityGroup = activity.ActivityGroup
+                    ActivityGroup = activity.ActivityGroup,
+                    RationaleCategory = activity.RationaleCategory,
+                    Description = activity.Description,
+                    ActivityNameParent = activity.ActivityNameParent
                 });
             }
 
