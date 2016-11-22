@@ -44,15 +44,7 @@ namespace Server_Shefer.Controllers
         {
             HttpResponseMessage response = null;
             var doctor = _doctorsRepository.FindByEmail(Email, Password);
-            if (doctor == null)
-            {
-                response = new HttpResponseMessage(HttpStatusCode.NotFound);
-            }
-            else
-            {
-                response = Request.CreateResponse(HttpStatusCode.OK, doctor);
-
-            }
+            response = doctor == null ? new HttpResponseMessage(HttpStatusCode.NotFound) : Request.CreateResponse(HttpStatusCode.OK, doctor);
             return response;
 
             //var email = Email;   

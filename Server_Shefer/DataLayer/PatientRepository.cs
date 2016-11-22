@@ -12,15 +12,17 @@ namespace Server_Shefer.DataLayer
     public class PatientRepository
     {
         private IDbConnection db = new OleDbConnection("Provider = Microsoft.ACE.OLEDB.12.0; " +
-                                                        "Data Source = d:\\FinalProject\\shefer-server\\Server_Shefer\\App_Data\\Shefer_Data.accdb");
+                                                        "Data Source = " + HttpContext.Current.Server.MapPath("/App_Data/Shefer_Data.accdb"));
         private ProgramRepository _programRepository = new ProgramRepository();
         private PatientContactRepository _patientContactRepository = new PatientContactRepository();
 
         //get patient
-        public PatientClass FindPatien(int id)
+        public PatientClass FindPatien(int Password)
         {
-            var patient = this.db.Query<PatientClass>("SELECT * From Patients WHERE PatientId = @PatientId", new { PatientId = id }).SingleOrDefault();
-
+            var patient = this.db.Query<PatientClass>("SELECT * From Patients WHERE Password = @Password", new { Password = Password }).SingleOrDefault();
+            var patientId = patient.PatientID;
+            patient.Program = _programRepository.GetProgram(patientId);
+            patient.Contact = _patientContactRepository.GetContact(patientId);
             return patient;
         }
         //add patient

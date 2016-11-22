@@ -15,7 +15,7 @@ namespace Server_Shefer.DataLayer
     public class DoctorsRepository : DoctorClass
     {
         private IDbConnection db = new OleDbConnection("Provider = Microsoft.ACE.OLEDB.12.0; " +
-                                                        "Data Source = d:\\FinalProject\\shefer-server\\Server_Shefer\\App_Data\\Shefer_Data.accdb");
+                                                        "Data Source = " + HttpContext.Current.Server.MapPath("/App_Data/Shefer_Data.accdb"));
         //get all doctors from database
         public List<DoctorClass> GetAllDoctors()
         {

@@ -12,16 +12,24 @@ namespace Server_Shefer.DataLayer
     public class ProgramRepository
     {
         private IDbConnection db = new OleDbConnection("Provider = Microsoft.ACE.OLEDB.12.0; " +
-                                                        "Data Source = d:\\FinalProject\\shefer-server\\Server_Shefer\\App_Data\\Shefer_Data.accdb");
+                                                        "Data Source = " + HttpContext.Current.Server.MapPath("/App_Data/Shefer_Data.accdb"));
         //get program
-        public ProgramClass GetProgram(int programId)
+        public List<ProgramClass> GetProgram(int PatientID)
         {
-            var sql = "SELECT * From Programs WHERE ProgramID = @ProgramID";
-            var sqlActivities = "SELECT * FROM PatientActivities WHERE ProgramID = @ProgramID";
-            var program =  this.db.Query<ProgramClass>(sql, new { ProgramID = programId }).SingleOrDefault();
-            var activities = this.db.Query<PatientActivityClass>(sql, new {ProgramID = programId}).ToList();
-            program.PatientActivityList = activities;
-            return program;
+            //Find patient program
+            var sqlProgram = "SELECT * From Programs WHERE PatientId = @PatientId"; 
+            //Find all activities in patients programs
+            var sqlActivities = "SELECT * From PatientActivities WHERE ProgramId = @ProgramId AND PatientId = @PatientId";
+            var programs =
+                        this.db.Query<ProgramClass>(sqlProgram, new { PatientId = PatientID }).ToList();
+            foreach (var program in programs)
+            {
+                program.PatientActivityList =
+                    this.db.Query<PatientActivityClass>(sqlActivities,
+                        new { ProgramId = program.ProgramID, PatientId = PatientID }).ToList();
+            }
+            
+            return programs;
 
         }
         //create program

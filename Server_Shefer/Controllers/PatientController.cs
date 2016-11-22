@@ -23,11 +23,14 @@ namespace Server_Shefer.Controllers
         {
             return new string[] { "value1", "value2" };
         }
-
+        [Route("api/Family")]
         // GET: api/Patient/5
-        public PatientClass Get(int id)
+        public HttpResponseMessage Get(int password)
         {
-            return _patientRepository.FindPatien(id);
+            HttpResponseMessage response = null;
+            var family = _patientRepository.FindPatien(password);
+            response = family == null ? new HttpResponseMessage(HttpStatusCode.NotFound) : Request.CreateResponse(HttpStatusCode.OK, family);
+            return response;
         }
 
         // get patient contact
