@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Data.OleDb;
+using System.IO;
 using System.Linq;
 using System.Web;
 using Dapper;
@@ -12,7 +13,7 @@ namespace Server_Shefer.DataLayer
     public class ProgramRepository
     {
         private IDbConnection db = new OleDbConnection("Provider = Microsoft.ACE.OLEDB.12.0; " +
-                                                        "Data Source = " + HttpContext.Current.Server.MapPath("/App_Data/Shefer_Data.accdb"));
+                                                        "Data Source = " + Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"App_Data/Shefer_Data.accdb"));
         //get program
         public List<ProgramClass> GetProgram(int PatientID)
         {
@@ -33,11 +34,13 @@ namespace Server_Shefer.DataLayer
 
         }
         //create program
-        public void CreateProgram(ProgramClass program)
+        public ProgramClass CreateProgram(ProgramClass program)
         {
             var sql = 
                 "INSERT INTO Programs ([PatientId], [Status], [StartDay], [Duration], [CurrentWeek]) " +
                 "VALUES (@PatientId, @Status, @StartDay, @Duration, @CurrentWeek)";
+            var sqlId = "SELECT * From Programs WHERE PatientId = @PatientId";
+            var sqlGetActivities = "SELECT * From PatientActivities WHERE ProgramID = @ProgramID";
             var  newProgram = this.db.Query<ProgramClass>(sql, new
             {
                 PatientId = program.PatientId,
@@ -45,34 +48,33 @@ namespace Server_Shefer.DataLayer
                 StartDay = program.StartDay,
                 Duration = program.Duration,
                 CurrentWeek = program.CurrentWeek
-            }).SingleOrDefault();
-            program.ProgramID = newProgram.ProgramID;
+            }).FirstOrDefault();
+            var newP = this.db.Query<ProgramClass>(sqlId, new {PatientId = program.PatientId}).LastOrDefault();
+            program.ProgramID = newP.ProgramID;
             // add new activities to the program
             var insertActivities = "INSERT INTO PatientActivities ([ProgramID], [ActivityId], [ActivityRestponce]," +
                                "[ActivityFeedback], [ActivityStatus],[ActivityName]," +
-                               "[ActivityType], [ActivityGroup], [RationaleCategory], [Description]," +
-                                   "[ActivityNameParent]) VALUES " +
+                               "[ActivityType], [ActivityGroupAge], [ActivityNameParent], [Description]) VALUES " +
                                " (@ProgramId, @ActivityId, @ActivityRestponce, @ActivityFeedback," +
-                               "@ActivityStatus, @ActivityName, @ActivityType, @ActivityGroup" +
-                                   "@ActivityGroup, @RationaleCategory, @Description, @ActivityNameParent)";
+                               "@ActivityStatus, @ActivityName, @ActivityType, @ActivityGroupAge, @ActivityNameParent, @Description)";
             foreach (var activity in program.PatientActivityList)
             {
                 this.db.Query<string>(insertActivities, new
                 {
-                    ProgramID = activity.ProgramId,
+                    ProgramID = newP.ProgramID,
                     ActivityId = activity.ActivityId,
                     ActivityRestponce = activity.ActivityResponce,
                     ActivityFeedback = activity.ActivityFeedback,
                     ActivityStatus = activity.ActivityStatus,
                     ActivityName = activity.ActivityName,
                     ActivityType = activity.ActivityType,
-                    ActivityGroup = activity.ActivityGroup,
-                    RationaleCategory = activity.RationaleCategory,
-                    Description = activity.Description,
-                    ActivityNameParent = activity.ActivityNameParent
+                    ActivityGroupAge = activity.ActivityGroupAge,
+                    ActivityNameParent = activity.ActivityNameParent,
+                    Description = activity.Description
                 });
             }
-
+            newP.PatientActivityList = this.db.Query<PatientActivityClass>(sqlGetActivities, new { ProgramID = newP.ProgramID }).ToList();
+            return newP;
         }
         //update program
         public void UpdateProgram(ProgramClass program)
@@ -94,9 +96,9 @@ namespace Server_Shefer.DataLayer
             // add new activities to the program
             var insertActivities = "INSERT INTO PatientActivities ([ProgramID], [ActivityId], [ActivityRestponce]," +
                                "[ActivityFeedback], [ActivityStatus],[ActivityName]," +
-                               "[ActivityType], [ActivityGroup]) VALUES " +
+                               "[ActivityType], [ActivityGroupAge], [ActivityNameParent], [Description]) VALUES " +
                                " (@ProgramId, @ActivityId, @ActivityRestponce, @ActivityFeedback," +
-                               "@ActivityStatus, @ActivityName, @ActivityType, @ActivityGroup)";
+                               "@ActivityStatus, @ActivityName, @ActivityType, @ActivityGroupAge, @ActivityNameParent, @Description)";
             foreach (var activity in program.PatientActivityList)
             {
                 this.db.Query<string>(insertActivities, new
@@ -108,7 +110,9 @@ namespace Server_Shefer.DataLayer
                     ActivityStatus = activity.ActivityStatus,        
                     ActivityName = activity.ActivityName,
                     ActivityType = activity.ActivityType,
-                    ActivityGroup = activity.ActivityGroup
+                    ActivityGroupAge = activity.ActivityGroupAge,
+                    ActivityNameParent = activity.ActivityNameParent,
+                    Description = activity.Description
                 });
             }
         }

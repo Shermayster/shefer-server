@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Data.OleDb;
+using System.IO;
 using System.Linq;
 using System.Web;
 using Dapper;
@@ -12,7 +13,7 @@ namespace Server_Shefer.DataLayer
     public class PatientRepository
     {
         private IDbConnection db = new OleDbConnection("Provider = Microsoft.ACE.OLEDB.12.0; " +
-                                                        "Data Source = " + HttpContext.Current.Server.MapPath("/App_Data/Shefer_Data.accdb"));
+                                                        "Data Source = " + Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"App_Data/Shefer_Data.accdb"));
         private ProgramRepository _programRepository = new ProgramRepository();
         private PatientContactRepository _patientContactRepository = new PatientContactRepository();
 
@@ -31,21 +32,21 @@ namespace Server_Shefer.DataLayer
             var sql = "INSERT INTO Patients([DoctorId], [Password]) VALUES(@DoctorId, @Password);";
             var sqlIdent =
                 "SELECT * From Patients WHERE Password = @Password";
-            this.db.Execute(sql, patient);
-            var newPatientID = db.Query<PatientClass>(sqlIdent, patient).FirstOrDefault();
-            patient.Contact.PatientId = newPatientID.PatientID;
-            patient.Program[0].PatientId = newPatientID.PatientID;
-            _patientContactRepository.AddContact(patient.Contact);
-            _programRepository.CreateProgram(patient.Program[0]);
-            return newPatientID;
-           
+            this.db.Query<PatientContact>(sql, patient);
+            var newPatient = db.Query<PatientClass>(sqlIdent, patient).FirstOrDefault();
+            patient.Contact.PatientId = newPatient.PatientID;
+            patient.Program[0].PatientId = newPatient.PatientID;
+            newPatient.Contact = _patientContactRepository.AddContact(patient.Contact);
+            newPatient.Program = new List<ProgramClass>();
+            newPatient.Program.Add(_programRepository.CreateProgram(patient.Program[0]));
+            return newPatient;    
         }
 
         //update patient data
-        public void Update(int id, PatientClass patient)
+        public void Update(PatientClass patient)
         {
             var sql = "UPDATE Patients set [Password] = @Password where PatientId = @PatientId";
-            this.db.Query<string>(sql, new { Password = patient.Password, PatientID = id });
+            this.db.Query<string>(sql, new { Password = patient.Password, PatientID = patient.PatientID });
         }
 
         //delete patient from database

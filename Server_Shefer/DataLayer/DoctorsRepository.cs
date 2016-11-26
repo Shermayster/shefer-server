@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.OleDb;
 using System.Data.SqlClient;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Web;
@@ -15,7 +16,7 @@ namespace Server_Shefer.DataLayer
     public class DoctorsRepository : DoctorClass
     {
         private IDbConnection db = new OleDbConnection("Provider = Microsoft.ACE.OLEDB.12.0; " +
-                                                        "Data Source = " + HttpContext.Current.Server.MapPath("/App_Data/Shefer_Data.accdb"));
+                                                        "Data Source = " + Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"App_Data/Shefer_Data.accdb"));
         //get all doctors from database
         public List<DoctorClass> GetAllDoctors()
         {
@@ -58,7 +59,7 @@ namespace Server_Shefer.DataLayer
                 foreach (var patient in patientData)
                 {
                     patient.Contact =
-                        this.db.Query<PatientContact>(sqlContact, new {PatientId = patient.PatientID}).SingleOrDefault();
+                        this.db.Query<PatientContact>(sqlContact, new {PatientId = patient.PatientID}).FirstOrDefault();
                     patient.Program =
                         this.db.Query<ProgramClass>(sqlProgram, new {PatientId = patient.PatientID}).ToList();
                     foreach (var program in patient.Program)

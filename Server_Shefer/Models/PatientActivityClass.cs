@@ -18,6 +18,6 @@ namespace Server_Shefer.Models
         public string RationaleCategory { get; set; }
         public string Description { get; set; }
         public string ActivityNameParent { get; set; }
-        public int ActivityGroup { get; set; }
+        public int ActivityGroupAge { get; set; }
     }
 }

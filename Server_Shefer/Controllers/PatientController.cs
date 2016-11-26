@@ -43,28 +43,36 @@ namespace Server_Shefer.Controllers
         //add contact to patient data
         [Route("api/Patient/contact")]
         [HttpPost]
-        public void PostContact([FromBody] PatientContact contact)
+        public void PostContact([FromBody] PatientClass patient)
         {
-            _patientContactRepository.AddContact(contact);
+            _patientRepository.Update(patient);
+            _patientContactRepository.AddContact(patient.Contact);
         }
 
         // POST: api/Patient
-        public PatientClass Post([FromBody]PatientClass patient)
+        [Route("api/Patient")]
+        [HttpPost]
+        public PatientClass Post([FromBody] PatientClass patient)
         {
-            return _patientRepository.AddPatient(patient);
+
+            var family = _patientRepository.AddPatient(patient);
+
+            return family;
         }
 
+
         // PUT: api/Patient/5
-        public void Put(int id, [FromBody]PatientClass patient)
+        public void Put([FromBody]PatientClass patient)
         {
-            _patientRepository.Update(id, patient);
+            _patientRepository.Update(patient);
         }
         // PUT: api/Patient/5
         [Route("api/Patient/contact/update")]
         [HttpPut]
-        public void UpdateAddress([FromBody]PatientContact contact)
+        public void UpdateAddress([FromBody]PatientClass patient)
         {
-            _patientContactRepository.UpdateContact(contact);
+            _patientRepository.Update(patient);
+            _patientContactRepository.UpdateContact(patient.Contact);
         }
 
         // DELETE: api/Patient/5
