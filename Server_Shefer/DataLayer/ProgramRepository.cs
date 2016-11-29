@@ -63,7 +63,7 @@ namespace Server_Shefer.DataLayer
                 {
                     ProgramID = newP.ProgramID,
                     ActivityId = activity.ActivityId,
-                    ActivityRestponce = activity.ActivityResponce,
+                    ActivityRestponce = activity.ActivityRestponce,
                     ActivityFeedback = activity.ActivityFeedback,
                     ActivityStatus = activity.ActivityStatus,
                     ActivityName = activity.ActivityName,
@@ -92,7 +92,9 @@ namespace Server_Shefer.DataLayer
 
             //delet all activities in the program
             var deleteActivities = "DELETE * FROM PatientActivities WHERE ProgramID = @ProgramID";
+            var deleteResponse = "DELETE * FROM ActivitiesResponse WHERE ProgramID = @ProgramID";
             this.db.Query<string>(deleteActivities, new {ProgramID = program.ProgramID});
+            this.db.Query<string>(deleteResponse, new {ProgramID = program.ProgramID});
             // add new activities to the program
             var insertActivities = "INSERT INTO PatientActivities ([ProgramID], [ActivityId], [ActivityRestponce]," +
                                "[ActivityFeedback], [ActivityStatus],[ActivityName]," +
@@ -105,7 +107,7 @@ namespace Server_Shefer.DataLayer
                 {
                     ProgramID = activity.ProgramId,
                     ActivityId = activity.ActivityId, 
-                    ActivityRestponce = activity.ActivityResponce,
+                    ActivityRestponce = activity.ActivityRestponce,
                     ActivityFeedback = activity.ActivityFeedback,
                     ActivityStatus = activity.ActivityStatus,        
                     ActivityName = activity.ActivityName,
@@ -122,6 +124,33 @@ namespace Server_Shefer.DataLayer
         {
             var sql = "DELETE * FROM Programs  WHERE ProgramID = @ProgramID";
             this.db.Query<string>(sql, new {ProgramID = programId});
+        }
+
+        //add response to acivity
+        public void CreateResponse(ActivitiesResponse activityResponse)
+        {
+            var sql =
+                "INSERT INTO ActivitiesResponse ([ProgramID], [ActivityName], [ActivityResponse], [Week]) VALUES" +
+                "(@ProgramID, @ActivityName, @ActivityResponse, @Week)";
+            this.db.Query<ActivitiesResponse>(sql, new
+            {
+                ProgramID = activityResponse.ProgramID,
+                ActivityName = activityResponse.ActivityName,
+                ActivityResponse = activityResponse.ActivityResponse,
+                Week = activityResponse.Week
+            });
+        }
+
+        //update activity in program
+        public void UpdateActivity(PatientActivityClass activity)
+        {
+            var sql =
+                "UPDATE PatientActivities set [ActivityRestponce] = @ActivityRestponce WHERE PatienActivityId = @PatienActivityId";
+            this.db.Query<PatientActivityClass>(sql, new
+            {
+                ActivityRestponce = activity.ActivityRestponce,
+                PatienActivityId = activity.PatienActivityId
+            });
         }
     }
 }

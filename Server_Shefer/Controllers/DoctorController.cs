@@ -53,6 +53,7 @@ namespace Server_Shefer.Controllers
         }
 
         // POST: api/Doctor - create
+        [Route("api/AddDoctor")]
         [HttpPost]
         public void CreateDoctor(DoctorClass doctor)
         {

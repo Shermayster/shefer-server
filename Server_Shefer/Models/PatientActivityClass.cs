@@ -7,8 +7,8 @@ namespace Server_Shefer.Models
 {
     public class PatientActivityClass
     {
-        public int PatientActivityId { get; set; }
-        public string ActivityResponce { get; set; }
+        public int PatienActivityId { get; set; }
+        public string ActivityRestponce { get; set; }
         public string ActivityFeedback { get; set; }
         public string ActivityStatus { get; set; }
         public int ProgramId { get; set; }

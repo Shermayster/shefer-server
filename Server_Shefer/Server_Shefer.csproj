@@ -212,6 +212,7 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Models\ActivitiesResponse.cs" />
     <Compile Include="Models\ActivityClass.cs" />
     <Compile Include="Models\ActivityInterface.cs" />
     <Compile Include="Models\DoctorClass.cs" />

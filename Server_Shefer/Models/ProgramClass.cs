@@ -13,6 +13,7 @@ namespace Server_Shefer.Models
         public DateTime StartDay { get; set; }
         public int Duration { get; set; }
         public int CurrentWeek { get; set; }
+        public List<ActivitiesResponse> ActivitiesResponseList { get; set; }
         public List<PatientActivityClass> PatientActivityList { get; set; }
     }
 }

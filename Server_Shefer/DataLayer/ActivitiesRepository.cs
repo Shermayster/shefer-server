@@ -25,6 +25,6 @@ namespace Server_Shefer.DataLayer
         {
             return this.db.Query<PatientActivityClass>("SELECT * FROM Activities WHERE ProgramName = '" + program + "'").ToList();
         }
-
+      
     }
 }

@@ -9,10 +9,12 @@ namespace Server_Shefer.Models
     {
         public int ActivityID { get; set; }
         public int GroupAge { get; set; }
+        public string ActivityRestponce { get; set; }
         public string RationaleCategory { get; set; }
         public string ActivityName { get; set; }
         public string ActivityNameParent { get; set; }
         public string Description { get; set; }
-        public string ActivityType { get; set; }
+        public string ActivityType { get; set; } 
+        public  string ActivityStatus { get; set; }
     }
 }
